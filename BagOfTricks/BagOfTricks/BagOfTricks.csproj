@@ -14,6 +14,8 @@
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -70,6 +72,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\EffectEntry.cs" />
+    <Compile Include="Models\PlaylistEntry.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\BackgroundMusicViewModel.cs" />
     <Compile Include="ViewModels\SoundEffectsViewModel.cs" />

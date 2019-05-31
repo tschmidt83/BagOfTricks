@@ -9,7 +9,25 @@
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance vm:BackgroundMusicViewModel, IsDesignTimeCreatable=True}"
              DataContext="{Binding Source={StaticResource Locator}, Path=BackgroundMusic}">
-    <Grid>
+    <DockPanel LastChildFill="True">
+        <StackPanel DockPanel.Dock="Right" Width="120">
+            <!-- Playlist controls -->
+            <Button Content="Playlist laden"/>
+            <Button Content="Playlist speichern"/>
+            <Separator/>
+            <Button Content="Song hinzufügen"/>
+            <Button Content="Song entfernen"/>
+        </StackPanel>
+        
+        <DockPanel DockPanel.Dock="Left">
+            <Grid DockPanel.Dock="Bottom">
+                <!-- Play controls, progress -->
+            </Grid>
             
-    </Grid>
+            <!-- Playlist -->
+            <ListBox DockPanel.Dock="Top" ItemsSource="{Binding CurrentPlaylist}">
+                
+            </ListBox>
+        </DockPanel>
+    </DockPanel>
 </UserControl>
