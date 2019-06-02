@@ -7,7 +7,7 @@
         xmlns:v="clr-namespace:BagOfTricks.Views"
         xmlns:vm="clr-namespace:BagOfTricks.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Bag Of Tricks" Height="450" Width="800">
     <TabControl>
         <TabItem Header="Musik">
             <v:BackgroundMusicView/>

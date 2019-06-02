@@ -5,11 +5,43 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:BagOfTricks.Views"
              xmlns:vm="clr-namespace:BagOfTricks.ViewModels"
+             xmlns:h="clr-namespace:BagOfTricks.Helpers"
+             xmlns:c="clr-namespace:BagOfTricks.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance vm:SoundEffectsViewModel, IsDesignTimeCreatable=True}"
              DataContext="{Binding Source={StaticResource Locator}, Path=SoundEffects}">
-    <Grid>
-            
-    </Grid>
+
+    <UserControl.Resources>
+        <c:BoolInvertConverter x:Key="biConv"/>
+        <c:EditModeConverter x:Key="emConv"/>
+
+        <DataTemplate DataType="{x:Type h:CachedEffect}">
+            <Grid Width="120" Height="100" Margin="5">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <TextBox Grid.Row="0" Grid.Column="0" Text="{Binding Name}" TextAlignment="Center" IsReadOnly="{Binding Source={StaticResource Locator}, Path=SoundEffects.EditMode, Converter={StaticResource biConv}}"/>
+                <Button Grid.Row="1" Grid.Column="0" Content="Play" Command="{Binding Source={StaticResource Locator}, Path=SoundEffects.PlayEffectCommand}" CommandParameter="{Binding}" Background="{Binding Source={StaticResource Locator}, Path=SoundEffects.EditMode, Converter={StaticResource emConv}}"/>
+                <CheckBox Grid.Row="2" Grid.Column="0" Content="Loop" IsChecked="{Binding LoopEffect}"/>
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <DockPanel LastChildFill="True">
+        <ToggleButton DockPanel.Dock="Bottom" Content="Bearbeiten" IsChecked="{Binding EditMode}"/>
+        <ItemsControl ItemsSource="{Binding EffectsCollection}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </DockPanel>
 </UserControl>

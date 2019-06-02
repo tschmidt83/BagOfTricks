@@ -154,6 +154,7 @@ namespace BagOfTricks.Models
                     {
                         // Get the corresponding effect and remove it from the stack
                         CachedEffect fx = FxStack[e.SampleProvider];
+                        fx.IsPlaying = false;
                         FxStack.Remove(e.SampleProvider);
                         if (fx.LoopEffect)
                             EffectPlay(fx);
@@ -267,17 +268,21 @@ namespace BagOfTricks.Models
         {
             bool success = false;
 
-            try
+            if (effect.IsInitialized && !effect.IsPlaying)
             {
-                effect.Restart();
-                ISampleProvider sp = ConvertMonoStereo(effect);
-                FxStack.Add(sp, effect);
-                Mixer.AddMixerInput(sp);
-                success = true;
-            }
-            catch(Exception ex)
-            {
-                success = false;
+                try
+                {
+                    effect.Restart();
+                    ISampleProvider sp = ConvertMonoStereo(effect);
+                    FxStack.Add(sp, effect);
+                    Mixer.AddMixerInput(sp);
+                    effect.IsPlaying = true;
+                    success = true;
+                }
+                catch (Exception ex)
+                {
+                    success = false;
+                }
             }
 
             return success;

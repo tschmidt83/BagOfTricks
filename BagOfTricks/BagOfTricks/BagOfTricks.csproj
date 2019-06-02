@@ -76,6 +76,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\BoolInvertConverter.cs" />
+    <Compile Include="Converters\EditModeConverter.cs" />
     <Compile Include="Helpers\AutoDisposeAudioFileReader.cs" />
     <Compile Include="Helpers\CachedEffect.cs" />
     <Compile Include="Models\AudioPlayer.cs" />

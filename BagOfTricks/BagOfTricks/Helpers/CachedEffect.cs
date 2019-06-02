@@ -12,6 +12,15 @@ namespace BagOfTricks.Helpers
     // Based on https://markheath.net/post/fire-and-forget-audio-playback-with
     public class CachedEffect : ISampleProvider
     {
+        /***** IsPlaying *****/
+        private bool m_IsPlaying = false;
+
+        public bool IsPlaying
+        {
+            get { return m_IsPlaying; }
+            set { m_IsPlaying = value; RaisePropertyChanged("IsPlaying"); }
+        }
+
         /***** Volume *****/
         private float m_Volume;
 
@@ -39,25 +48,64 @@ namespace BagOfTricks.Helpers
             set { m_Path = value; RaisePropertyChanged("Path"); }
         }
 
+        /***** Name *****/
+        private string m_Name = "Mein Effekt";
+
+        public string Name
+        {
+            get { return m_Name; }
+            set { m_Name = value; RaisePropertyChanged("Name"); }
+        }
+
+        private bool m_IsInitialized = false;
+
+        public bool IsInitialized
+        {
+            get { return m_IsInitialized; }
+            private set { m_IsInitialized = value; }
+        }
+
         public float[] AudioData { get; private set; }
         private long position;
         public WaveFormat WaveFormat { get; private set; }
 
+        public CachedEffect()
+        {
+        }
+
         public CachedEffect(string audioFileName)
         {
-            Path = audioFileName;
-            using (var audioFileReader = new AudioFileReader(audioFileName))
+            Initialize(audioFileName);
+        }
+
+        public void Initialize(string audioFileName, bool overwriteProperties = false)
+        {
+            if (!IsPlaying)
             {
-                // TODO: could add resampling in here if required
-                WaveFormat = audioFileReader.WaveFormat;
-                var wholeFile = new List<float>((int)(audioFileReader.Length / 4));
-                var readBuffer = new float[audioFileReader.WaveFormat.SampleRate * audioFileReader.WaveFormat.Channels];
-                int samplesRead;
-                while ((samplesRead = audioFileReader.Read(readBuffer, 0, readBuffer.Length)) > 0)
+                System.IO.FileInfo fi = new System.IO.FileInfo(audioFileName);
+                if (overwriteProperties)
                 {
-                    wholeFile.AddRange(readBuffer.Take(samplesRead));
+                    Volume = 1.0f;
+                    LoopEffect = false;
+                    Name = fi.Name;
                 }
-                AudioData = wholeFile.ToArray();
+                Path = audioFileName;
+
+                using (var audioFileReader = new AudioFileReader(audioFileName))
+                {
+                    // TODO: could add resampling in here if required
+                    WaveFormat = audioFileReader.WaveFormat;
+                    var wholeFile = new List<float>((int)(audioFileReader.Length / 4));
+                    var readBuffer = new float[audioFileReader.WaveFormat.SampleRate * audioFileReader.WaveFormat.Channels];
+                    int samplesRead;
+                    while ((samplesRead = audioFileReader.Read(readBuffer, 0, readBuffer.Length)) > 0)
+                    {
+                        wholeFile.AddRange(readBuffer.Take(samplesRead));
+                    }
+                    AudioData = wholeFile.ToArray();
+                }
+
+                IsInitialized = true;
             }
         }
 
