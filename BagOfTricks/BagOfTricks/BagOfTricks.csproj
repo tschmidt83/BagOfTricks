@@ -76,6 +76,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\AutoDisposeAudioFileReader.cs" />
     <Compile Include="Models\AudioPlayer.cs" />
     <Compile Include="Models\EffectEntry.cs" />
     <Compile Include="Models\PlaylistEntry.cs" />

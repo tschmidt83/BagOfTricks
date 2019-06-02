@@ -89,5 +89,42 @@ namespace TestOfTricks
 
             Assert.AreEqual(true, success);
         }
+
+        [TestMethod]
+        public void SingleEffectPlay()
+        {
+            bool success = false;
+
+            if (MyAudioPlayer.EffectPlay(@"C:\Glockenschlag.mp3"))
+            {
+                success = true;
+            }
+
+            Assert.AreEqual(true, success);
+        }
+
+        [TestMethod]
+        public void SingleEffectWithMusic()
+        {
+
+        }
+
+        [TestMethod]
+        public void MultipleEffectsPlay()
+        {
+
+        }
+
+        [TestMethod]
+        public void MultipleEffectsWithMusic()
+        {
+
+        }
+
+        [TestMethod]
+        public void SingleEffectLoop()
+        {
+
+        }
     }
 }

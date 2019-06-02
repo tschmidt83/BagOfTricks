@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using BagOfTricks.Helpers;
 using NAudio.Wave;
 
 namespace BagOfTricks.Models
@@ -12,7 +13,7 @@ namespace BagOfTricks.Models
     /// <summary>
     /// Class for audio playback. Can play one music stream and several effects streams in parallel.
     /// </summary>
-    public class AudioPlayer : INotifyPropertyChanged
+    public class AudioPlayer : INotifyPropertyChanged, IDisposable
     {
         /***** IsMusicPlaying *****/
         private bool m_IsMusicPlaying;
@@ -50,12 +51,27 @@ namespace BagOfTricks.Models
             set { m_MusicVolume = value; RaisePropertyChanged("MusicVolume"); }
         }
 
-        private AudioFileReader MusicFileReader;
-        private WaveOut MusicPlayer = new WaveOut();
+        /// <summary>
+        /// NAudio base class for reading audio files
+        /// </summary>
+        private ISampleProvider MusicFileReader;
 
-        // This flag needs to be set manually in MusicStop() to prevent the MusicPlayer_PlaybackStopped from looping the current track.
+        /// <summary>
+        /// Necessary for outputting multiple streams at once
+        /// </summary>
+        private NAudio.Wave.SampleProviders.MixingSampleProvider Mixer;
+
+        /// <summary>
+        /// NAudio base class for wave output
+        /// </summary>
+        private WaveOut OutputDevice = new WaveOut();
+
+        // This flag needs to be set manually in MusicStop() to prevent the Mixer_MixerInputEnded from looping the current track.
         // Advancing in the playlist must be handled in the playlist manager where the MusicFinished event is processed.
         private bool RequestMusicStop = false;
+
+        // This flag needs to be set manually in Dispose() to get the chance to close all streams.
+        private bool Shutdown = false;
 
         /// <summary>
         /// Event which will be raised when the music track is finished and not looped. This allows the playlist class to advance to the next track.
@@ -67,49 +83,53 @@ namespace BagOfTricks.Models
         /// </summary>
         public AudioPlayer()
         {
-            MusicPlayer.PlaybackStopped += MusicPlayer_PlaybackStopped;
+            Mixer = new NAudio.Wave.SampleProviders.MixingSampleProvider(WaveFormat.CreateIeeeFloatWaveFormat(44100, 2));
+            Mixer.ReadFully = true;
+
+            // TODO: Init once (here) or init each time a play starts when nothing else is running?
+            OutputDevice.Init(Mixer);
+            OutputDevice.Play();
+
+            Mixer.MixerInputEnded += Mixer_MixerInputEnded;
         }
 
         /// <summary>
-        /// This event gets called when the playback stops.
+        /// IDisposable member. Close the mixer.
+        /// </summary>
+        public void Dispose()
+        {
+            Shutdown = true;
+            // TODO: iterate over all mixer inputs and dispose them?
+            Mixer.RemoveAllMixerInputs();
+            Mixer.ReadFully = false;
+            OutputDevice.Dispose();
+        }
+
+        /// <summary>
+        /// This event gets called when a mixer input stops playing because its stream has ended.
         /// </summary>
         /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void MusicPlayer_PlaybackStopped(object sender, StoppedEventArgs e)
+        /// <param name="e">Contains information about the sample provider that has ended.</param>
+        private void Mixer_MixerInputEnded(object sender, NAudio.Wave.SampleProviders.SampleProviderEventArgs e)
         {
-            if (e.Exception == null)
+            if (Shutdown == false)
             {
-                if (RequestMusicStop == false)
+                // Check which sample provider has ended
+                if (e.SampleProvider == MusicFileReader)
                 {
-                    // End of stream
+                    IsMusicPlaying = false;
+
                     if (LoopBackgroundMusic)
                     {
-                        // TODO: make looping more efficient. Break is too long. Maybe MusicSetStreamPosition() is not the right way? Maybe there is a property in one of the base classes?
-                        MusicSetStreamPosition(0);
-                        MusicPlayer.Play();
-                        if (MusicPlayer.PlaybackState == PlaybackState.Playing)
-                            IsMusicPlaying = true;
-                        else
-                            IsMusicPlaying = false;
+                        // Loop music: reset stream position
+                        MusicReplay();
                     }
                     else
                     {
-                        IsMusicPlaying = false;
-
-                        // Raise event to update GUI and maybe advance in playlist
+                        // Raise event to update GUI
                         if (MusicFinished != null)
                             MusicFinished(this, null);
                     }
-                }
-                else
-                {
-                    // Manual stop
-                    RequestMusicStop = false;
-                    IsMusicPlaying = false;
-
-                    // Raise event to update GUI
-                    if (MusicFinished != null)
-                        MusicFinished(this, null);
                 }
             }
         }
@@ -119,25 +139,27 @@ namespace BagOfTricks.Models
         /// </summary>
         /// <param name="path">Path to audio file</param>
         /// <param name="loop">Loop audio (default: true)</param>
+        /// <param name="volume">Playback volume (default: full)</param>
         /// <returns>True if playback started successfully.</returns>
-        public bool MusicPlay(string path, bool loop = true)
+        public bool MusicPlay(string path, bool loop = true, float volume = 1.0f)
         {
             bool success = false;
 
             try
             {
                 MusicFileReader = new AudioFileReader(path);
-                MusicFileReader.Volume = MusicVolume;
+                AudioFileReader reader = MusicFileReader as AudioFileReader;
+                if (reader != null)
+                {
+                    reader.Volume = MusicVolume;
+                }
 
                 LoopBackgroundMusic = loop;
 
-                MusicPlayer.Init(MusicFileReader);
-                MusicPlayer.Play();
-                if (MusicPlayer.PlaybackState == PlaybackState.Playing)
-                {
-                    IsMusicPlaying = true;
-                    success = true;
-                }
+                Mixer.AddMixerInput(ConvertMonoStereo(MusicFileReader));
+
+                IsMusicPlaying = true;
+                success = true;
             }
             catch(Exception ex)
             {
@@ -148,13 +170,48 @@ namespace BagOfTricks.Models
         }
 
         /// <summary>
+        /// Re-plays the last music track
+        /// </summary>
+        /// <returns>True if playback started successfully.</returns>
+        private bool MusicReplay()
+        {
+            bool success = false;
+
+            try
+            { 
+                AudioFileReader reader = MusicFileReader as AudioFileReader;
+                if (reader != null)
+                {
+                    string path = reader.FileName;
+                    float volume = reader.Volume;
+                    reader.Position = 0;
+                    success = MusicPlay(path, true, volume);
+                }
+            }
+            catch (Exception ex)
+            {
+                success = false;
+            }
+
+            return success;
+        }
+
+        /// <summary>
         ///  Stops the background music.
         /// </summary>
         public void MusicStop()
         {
-            if (MusicPlayer != null && MusicPlayer.PlaybackState == PlaybackState.Playing)
-                MusicPlayer.Stop();
-            IsMusicPlaying = false;
+            if (IsMusicPlaying)
+            {
+                Mixer.RemoveMixerInput(MusicFileReader);
+                AudioFileReader reader = MusicFileReader as AudioFileReader;
+                if (reader != null)
+                {
+                    reader.Dispose();
+                }
+
+                IsMusicPlaying = false;
+            }
         }
 
         /// <summary>
@@ -163,12 +220,61 @@ namespace BagOfTricks.Models
         /// <param name="percent">Position in percent</param>
         public void MusicSetStreamPosition(double percent)
         {
-            if(MusicFileReader != null)
+            AudioFileReader reader = MusicFileReader as AudioFileReader;
+
+            if(reader != null)
             {
-                long length = MusicFileReader.Length;
+                long length = reader.Length;
                 long newPos = (long)(length * percent / 100);
-                MusicFileReader.Position = newPos;
+                reader.Position = newPos;
             }
+        }
+
+        /// <summary>
+        /// Plays background music.
+        /// </summary>
+        /// <param name="path">Path to audio file</param>
+        /// <returns>True if playback started successfully.</returns>
+        public bool EffectPlay(string path)
+        {
+            bool success = false;
+
+            try
+            {
+                // TODO: Buffer effects in memory instead of reading it from disk each time. This might be over the top in case of SSDs, but still more efficient with HDDs.
+                AudioFileReader fxReader = new AudioFileReader(path);
+                WaveOut fxOut = new WaveOut();
+                fxOut.Init(fxReader);
+                fxOut.Play();
+                if (fxOut.PlaybackState == PlaybackState.Playing)
+                    success = true;
+            }
+            catch(Exception ex)
+            {
+                success = false;
+            }
+
+            return success;
+        }
+
+
+        // From https://markheath.net/post/fire-and-forget-audio-playback-with
+        /// <summary>
+        /// Converts a SampleProvider to mono or stereo, in respect to the playback mixer
+        /// </summary>
+        /// <param name="input">Input sample provider</param>
+        /// <returns>Converted sample provider</returns>
+        private ISampleProvider ConvertMonoStereo(ISampleProvider input)
+        {
+            if (input.WaveFormat.Channels == Mixer.WaveFormat.Channels)
+            {
+                return input;
+            }
+            if (input.WaveFormat.Channels == 1 && Mixer.WaveFormat.Channels == 2)
+            {
+                return new NAudio.Wave.SampleProviders.MonoToStereoSampleProvider(input);
+            }
+            throw new NotImplementedException("Not yet implemented this channel count conversion");
         }
 
         #region INotifyPropertyChanged members
