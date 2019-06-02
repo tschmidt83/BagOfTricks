@@ -12,11 +12,14 @@
     <DockPanel LastChildFill="True">
         <StackPanel DockPanel.Dock="Right" Width="120">
             <!-- Playlist controls -->
-            <Button Content="Playlist laden"/>
-            <Button Content="Playlist speichern"/>
+            <Button Content="Playlist laden" Command="{Binding LoadPlaylistCommand}"/>
+            <Button Content="Playlist speichern" Command="{Binding SavePlaylistCommand}"/>
             <Separator/>
-            <Button Content="Song hinzufügen"/>
-            <Button Content="Song entfernen"/>
+            <Button Content="Song hinzufügen" Command="{Binding AddToPlaylistCommand}"/>
+            <Button Content="Song entfernen" Command="{Binding RemoveFromPlaylistCommand}"/>
+            <Separator/>
+            <Button Content="Abspielen" Command="{Binding StartPlayCommand}"/>
+            <Button Content="Anhalten" Command="{Binding StopPlayCommand}"/>
         </StackPanel>
         
         <DockPanel DockPanel.Dock="Left">
@@ -25,7 +28,7 @@
             </Grid>
             
             <!-- Playlist -->
-            <ListBox DockPanel.Dock="Top" ItemsSource="{Binding CurrentPlaylist}">
+            <ListBox DockPanel.Dock="Top" ItemsSource="{Binding CurrentPlaylist.Entries}" DisplayMemberPath="DisplayName" SelectedItem="{Binding SelectedEntry}">
                 
             </ListBox>
         </DockPanel>

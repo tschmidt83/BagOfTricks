@@ -79,7 +79,10 @@
     <Compile Include="Helpers\AutoDisposeAudioFileReader.cs" />
     <Compile Include="Helpers\CachedEffect.cs" />
     <Compile Include="Models\AudioPlayer.cs" />
+    <Compile Include="Models\AudioPlayerSimulator.cs" />
     <Compile Include="Models\EffectEntry.cs" />
+    <Compile Include="Interfaces\IAudioPlayer.cs" />
+    <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistEntry.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\BackgroundMusicViewModel.cs" />
@@ -142,8 +145,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

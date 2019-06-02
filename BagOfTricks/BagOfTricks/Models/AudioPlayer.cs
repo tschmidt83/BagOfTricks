@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using BagOfTricks.Interfaces;
 using BagOfTricks.Helpers;
 using NAudio.Wave;
 
@@ -13,10 +14,10 @@ namespace BagOfTricks.Models
     /// <summary>
     /// Class for audio playback. Can play one music stream and several effects streams in parallel.
     /// </summary>
-    public class AudioPlayer : INotifyPropertyChanged, IDisposable
+    public class AudioPlayer : INotifyPropertyChanged, IDisposable, IAudioPlayer
     {
         /***** IsMusicPlaying *****/
-        private bool m_IsMusicPlaying;
+        private bool m_IsMusicPlaying = false;
 
         /// <summary>
         /// Indicates whether the music player is running.
