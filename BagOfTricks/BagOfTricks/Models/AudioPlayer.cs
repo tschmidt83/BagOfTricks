@@ -56,6 +56,9 @@ namespace BagOfTricks.Models
         /// </summary>
         private ISampleProvider MusicFileReader;
 
+        // Fx stack, necessary to check effect looping
+        private Dictionary<ISampleProvider, CachedEffect> FxStack = new Dictionary<ISampleProvider, CachedEffect>();
+
         /// <summary>
         /// Necessary for outputting multiple streams at once
         /// </summary>
@@ -102,6 +105,7 @@ namespace BagOfTricks.Models
             // TODO: iterate over all mixer inputs and dispose them?
             Mixer.RemoveAllMixerInputs();
             Mixer.ReadFully = false;
+            FxStack.Clear();
             OutputDevice.Dispose();
         }
 
@@ -119,16 +123,39 @@ namespace BagOfTricks.Models
                 {
                     IsMusicPlaying = false;
 
-                    if (LoopBackgroundMusic)
+                    if (RequestMusicStop)
                     {
-                        // Loop music: reset stream position
-                        MusicReplay();
-                    }
-                    else
-                    {
+                        RequestMusicStop = false;
+
                         // Raise event to update GUI
                         if (MusicFinished != null)
                             MusicFinished(this, null);
+                    }
+                    else
+                    {
+                        if (LoopBackgroundMusic)
+                        {
+                            // Loop music: reset stream position
+                            MusicReplay();
+                        }
+                        else
+                        {
+                            // Raise event to update GUI
+                            if (MusicFinished != null)
+                                MusicFinished(this, null);
+                        }
+                    }
+                }
+                else
+                {
+                    // Check if it is an effect on the stack
+                    if (FxStack.ContainsKey(e.SampleProvider))
+                    {
+                        // Get the corresponding effect and remove it from the stack
+                        CachedEffect fx = FxStack[e.SampleProvider];
+                        FxStack.Remove(e.SampleProvider);
+                        if (fx.LoopEffect)
+                            EffectPlay(fx);
                     }
                 }
             }
@@ -231,23 +258,21 @@ namespace BagOfTricks.Models
         }
 
         /// <summary>
-        /// Plays background music.
+        /// Plays a single sound effect.
         /// </summary>
-        /// <param name="path">Path to audio file</param>
+        /// <param name="effect">Cached sound effect</param>
         /// <returns>True if playback started successfully.</returns>
-        public bool EffectPlay(string path)
+        public bool EffectPlay(CachedEffect effect)
         {
             bool success = false;
 
             try
             {
-                // TODO: Buffer effects in memory instead of reading it from disk each time. This might be over the top in case of SSDs, but still more efficient with HDDs.
-                AudioFileReader fxReader = new AudioFileReader(path);
-                WaveOut fxOut = new WaveOut();
-                fxOut.Init(fxReader);
-                fxOut.Play();
-                if (fxOut.PlaybackState == PlaybackState.Playing)
-                    success = true;
+                effect.Restart();
+                ISampleProvider sp = ConvertMonoStereo(effect);
+                FxStack.Add(sp, effect);
+                Mixer.AddMixerInput(sp);
+                success = true;
             }
             catch(Exception ex)
             {
@@ -256,7 +281,6 @@ namespace BagOfTricks.Models
 
             return success;
         }
-
 
         // From https://markheath.net/post/fire-and-forget-audio-playback-with
         /// <summary>

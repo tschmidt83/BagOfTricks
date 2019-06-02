@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using BagOfTricks.Models;
+using BagOfTricks.Helpers;
 
 namespace TestOfTricks
 {
@@ -95,8 +97,12 @@ namespace TestOfTricks
         {
             bool success = false;
 
-            if (MyAudioPlayer.EffectPlay(@"C:\Glockenschlag.mp3"))
+            // Prepare cached effects
+            CachedEffect fx = new CachedEffect(@"C:\Chirp.mp3");
+
+            if (MyAudioPlayer.EffectPlay(fx))
             {
+                System.Threading.Thread.Sleep(15000);
                 success = true;
             }
 
@@ -104,27 +110,83 @@ namespace TestOfTricks
         }
 
         [TestMethod]
-        public void SingleEffectWithMusic()
-        {
-
-        }
-
-        [TestMethod]
         public void MultipleEffectsPlay()
         {
+            bool success = false;
 
+            // Prepare cached effects
+            List<CachedEffect> fxList = new List<CachedEffect>();
+            for(int i = 0; i < 3; i++)
+                fxList.Add(new CachedEffect(@"C:\Chirp.mp3"));
+
+            for(int i = 0; i < fxList.Count; i++)
+            {
+                success = MyAudioPlayer.EffectPlay(fxList[i]);
+                if(success)
+                    System.Threading.Thread.Sleep(1000);
+                else
+                    break;
+            }
+
+            if(success)
+                System.Threading.Thread.Sleep(5000);
+
+            Assert.AreEqual(true, success);
         }
 
         [TestMethod]
         public void MultipleEffectsWithMusic()
         {
+            bool success = false;
 
+            // Prepare cached effects
+            List<CachedEffect> fxList = new List<CachedEffect>();
+            for (int i = 0; i < 3; i++)
+                fxList.Add(new CachedEffect(@"C:\Chirp.mp3"));
+
+            // Start music first
+            if (MyAudioPlayer.MusicPlay(@"C:\03 Quayside Pub.mp3"))
+            {
+                System.Threading.Thread.Sleep(5000);
+                if (MyAudioPlayer.IsMusicPlaying)
+                {
+                    // Add effects
+                    for (int i = 0; i < fxList.Count; i++)
+                    {
+                        success = MyAudioPlayer.EffectPlay(fxList[i]);
+                        if (success)
+                            System.Threading.Thread.Sleep(2000);
+                        else
+                            break;
+                    }
+
+                    MyAudioPlayer.MusicStop();
+                    success = !MyAudioPlayer.IsMusicPlaying;
+                }
+            }
+
+            if (success)
+                System.Threading.Thread.Sleep(5000);
+
+            Assert.AreEqual(true, success);
         }
 
         [TestMethod]
         public void SingleEffectLoop()
         {
+            bool success = false;
 
+            // Prepare cached effects
+            CachedEffect fx = new CachedEffect(@"C:\Chirp.mp3");
+            fx.LoopEffect = true;
+
+            if (MyAudioPlayer.EffectPlay(fx))
+            {
+                System.Threading.Thread.Sleep(15000);
+                success = true;
+            }
+
+            Assert.AreEqual(true, success);
         }
     }
 }
