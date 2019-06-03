@@ -157,6 +157,8 @@ namespace BagOfTricks.ViewModels
             bool? result = dlg.ShowDialog();
             if (result == true)
             {
+                MyAudioPlayer.MusicStop();
+
                 if (LoadPlaylistXml(dlg.FileName) == false)
                     System.Windows.MessageBox.Show("Fehler beim Laden!");
                 SelectedEntry = null;

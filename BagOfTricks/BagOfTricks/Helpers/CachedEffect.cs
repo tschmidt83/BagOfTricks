@@ -4,17 +4,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 using NAudio.Wave;
 
 namespace BagOfTricks.Helpers
 {
     // Based on https://markheath.net/post/fire-and-forget-audio-playback-with
+    [Serializable]
     public class CachedEffect : ISampleProvider
     {
         /***** IsPlaying *****/
         private bool m_IsPlaying = false;
 
+        [XmlIgnore]
         public bool IsPlaying
         {
             get { return m_IsPlaying; }
@@ -59,6 +62,7 @@ namespace BagOfTricks.Helpers
 
         private bool m_IsInitialized = false;
 
+        [XmlIgnore]
         public bool IsInitialized
         {
             get { return m_IsInitialized; }

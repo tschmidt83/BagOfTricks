@@ -84,6 +84,7 @@
     <Compile Include="Models\AudioPlayerSimulator.cs" />
     <Compile Include="Models\EffectEntry.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
+    <Compile Include="Models\EffectsCollection.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistEntry.cs" />
     <Compile Include="ViewModelLocator.cs" />

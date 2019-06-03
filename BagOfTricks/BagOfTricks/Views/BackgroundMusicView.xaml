@@ -26,6 +26,8 @@
             <Grid DockPanel.Dock="Bottom">
                 <!-- Play controls, progress -->
             </Grid>
+
+            <TextBox DockPanel.Dock="Top" Text="{Binding CurrentPlaylist.Name}" TextAlignment="Center"/>
             
             <!-- Playlist -->
             <ListBox DockPanel.Dock="Top" ItemsSource="{Binding CurrentPlaylist.Entries}" DisplayMemberPath="DisplayName" SelectedItem="{Binding SelectedEntry}">

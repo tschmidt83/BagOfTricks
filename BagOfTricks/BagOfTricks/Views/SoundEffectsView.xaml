@@ -17,7 +17,7 @@
         <c:EditModeConverter x:Key="emConv"/>
 
         <DataTemplate DataType="{x:Type h:CachedEffect}">
-            <Grid Width="120" Height="100" Margin="5">
+            <Grid Width="100" Height="100" Margin="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="1*"/>
@@ -35,13 +35,24 @@
     </UserControl.Resources>
 
     <DockPanel LastChildFill="True">
-        <ToggleButton DockPanel.Dock="Bottom" Content="Bearbeiten" IsChecked="{Binding EditMode}"/>
-        <ItemsControl ItemsSource="{Binding EffectsCollection}">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel/>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
+        <StackPanel DockPanel.Dock="Right" Width="120">
+            <ToggleButton Content="Bearbeiten" IsChecked="{Binding EditMode}"/>
+            
+            <Separator/>
+            <Button Content="Speichern"/>
+            <Button Content="Laden"/>
+        </StackPanel>
+
+        <DockPanel DockPanel.Dock="Left" LastChildFill="True">
+            <TextBox DockPanel.Dock="Top" Text="{Binding MyEffectsCollection.Name}" TextAlignment="Center" IsReadOnly="{Binding EditMode,Converter={StaticResource biConv}}"/>
+            
+            <ItemsControl DockPanel.Dock="Bottom" ItemsSource="{Binding MyEffectsCollection.EffectsList}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </DockPanel>
     </DockPanel>
 </UserControl>
