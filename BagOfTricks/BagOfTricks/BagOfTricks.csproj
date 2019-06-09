@@ -87,11 +87,16 @@
     <Compile Include="Models\EffectsCollection.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistEntry.cs" />
+    <Compile Include="Models\SceneManager.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\BackgroundMusicViewModel.cs" />
+    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SoundEffectsViewModel.cs" />
     <Compile Include="Views\BackgroundMusicView.xaml.cs">
       <DependentUpon>BackgroundMusicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SceneManagerView.xaml.cs">
+      <DependentUpon>SceneManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SoundEffectsView.xaml.cs">
       <DependentUpon>SoundEffectsView.xaml</DependentUpon>
@@ -113,6 +118,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\BackgroundMusicView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SceneManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

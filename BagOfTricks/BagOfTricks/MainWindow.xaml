@@ -8,12 +8,17 @@
         xmlns:vm="clr-namespace:BagOfTricks.ViewModels"
         mc:Ignorable="d"
         Title="Bag Of Tricks" Height="450" Width="800">
-    <TabControl>
-        <TabItem Header="Musik">
-            <v:BackgroundMusicView/>
-        </TabItem>
-        <TabItem Header="Effekte">
-            <v:SoundEffectsView/>
-        </TabItem>
-    </TabControl>
+    <DockPanel LastChildFill="True">
+        <v:SceneManagerView DockPanel.Dock="Top">
+            
+        </v:SceneManagerView>
+        <TabControl TabStripPlacement="Left">
+            <TabItem Header="Musik">
+                <v:BackgroundMusicView/>
+            </TabItem>
+            <TabItem Header="Effekte">
+                <v:SoundEffectsView/>
+            </TabItem>
+        </TabControl>
+    </DockPanel>
 </Window>

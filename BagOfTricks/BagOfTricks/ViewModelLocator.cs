@@ -11,16 +11,26 @@ namespace BagOfTricks
 {
     public class ViewModelLocator
     {
-        public ViewModelLocator()
+        static ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             // Register types
             SimpleIoc.Default.Register<BagOfTricks.Interfaces.IAudioPlayer, BagOfTricks.Models.AudioPlayer>(true);
+            SimpleIoc.Default.Register<BagOfTricks.Models.SceneManager>(true);
 
             // Register viewmodels
+            SimpleIoc.Default.Register<ViewModels.MainViewModel>();
             SimpleIoc.Default.Register<ViewModels.BackgroundMusicViewModel>();
             SimpleIoc.Default.Register<ViewModels.SoundEffectsViewModel>();
+        }
+
+        public ViewModels.MainViewModel Main
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<ViewModels.MainViewModel>();
+            }
         }
 
         public ViewModels.BackgroundMusicViewModel BackgroundMusic
