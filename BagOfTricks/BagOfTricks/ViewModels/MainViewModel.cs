@@ -38,7 +38,7 @@ namespace BagOfTricks.ViewModels
         /// </summary>
         public MainViewModel()
         {
-            MyAudioPlayer = new AudioPlayerSimulator();
+            MyAudioPlayer = new DesignModels.AudioPlayerSimulator();
         }
 
         /// <summary>

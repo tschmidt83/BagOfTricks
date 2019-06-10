@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using BagOfTricks.Helpers;
 using BagOfTricks.Interfaces;
 
-namespace BagOfTricks.Models
+namespace BagOfTricks.DesignModels
 {
     public class AudioPlayerSimulator : IAudioPlayer, INotifyPropertyChanged
     {

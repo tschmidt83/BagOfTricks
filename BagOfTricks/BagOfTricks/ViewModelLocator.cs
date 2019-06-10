@@ -21,6 +21,7 @@ namespace BagOfTricks
 
             // Register viewmodels
             SimpleIoc.Default.Register<ViewModels.MainViewModel>();
+            SimpleIoc.Default.Register<ViewModels.AdventureManagerViewModel>();
             SimpleIoc.Default.Register<ViewModels.BackgroundMusicViewModel>();
             SimpleIoc.Default.Register<ViewModels.SoundEffectsViewModel>();
         }
@@ -32,6 +33,15 @@ namespace BagOfTricks
                 return SimpleIoc.Default.GetInstance<ViewModels.MainViewModel>();
             }
         }
+
+        public ViewModels.AdventureManagerViewModel Adventure
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<ViewModels.AdventureManagerViewModel>();
+            }
+        }
+
 
         public ViewModels.BackgroundMusicViewModel BackgroundMusic
         {

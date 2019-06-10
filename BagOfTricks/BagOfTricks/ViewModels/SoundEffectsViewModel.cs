@@ -78,7 +78,7 @@ namespace BagOfTricks.ViewModels
         /// </summary>
         public SoundEffectsViewModel()
         {
-            MyAudioPlayer = new AudioPlayerSimulator();
+            MyAudioPlayer = new DesignModels.AudioPlayerSimulator();
             for (int i = 0; i < MyEffectsCollection.NumberOfEffects; i++)
                 MyEffectsCollection.EffectsList.Add(new CachedEffect());
         }

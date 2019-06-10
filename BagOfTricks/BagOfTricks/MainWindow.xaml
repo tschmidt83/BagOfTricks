@@ -9,9 +9,16 @@
         mc:Ignorable="d"
         Title="Bag Of Tricks" Height="450" Width="800">
     <DockPanel LastChildFill="True">
-        <v:SceneManagerView DockPanel.Dock="Top">
-            
-        </v:SceneManagerView>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Szene">
+                <MenuItem Header="Speichern"/>
+                <MenuItem Header="Laden"/>
+            </MenuItem>
+            <MenuItem Header="Abenteuer-Modus">
+                <MenuItem Header="Aktivieren"/>
+            </MenuItem>
+        </Menu>
+        
         <TabControl TabStripPlacement="Left">
             <TabItem Header="Musik">
                 <v:BackgroundMusicView/>

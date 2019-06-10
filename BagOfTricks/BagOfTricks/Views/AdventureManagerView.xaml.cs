@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace BagOfTricks.Views
 {
     /// <summary>
-    /// Interaction logic for SceneManagerView.xaml
+    /// Interaction logic for AdventureManagerView.xaml
     /// </summary>
-    public partial class SceneManagerView : UserControl
+    public partial class AdventureManagerView : UserControl
     {
-        public SceneManagerView()
+        public AdventureManagerView()
         {
             InitializeComponent();
         }

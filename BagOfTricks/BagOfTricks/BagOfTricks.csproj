@@ -82,7 +82,7 @@
     <Compile Include="Helpers\CachedEffect.cs" />
     <Compile Include="Models\Adventure.cs" />
     <Compile Include="Models\AudioPlayer.cs" />
-    <Compile Include="Models\AudioPlayerSimulator.cs" />
+    <Compile Include="DesignModels\AudioPlayerSimulator.cs" />
     <Compile Include="Models\EffectEntry.cs" />
     <Compile Include="Interfaces\IAudioPlayer.cs" />
     <Compile Include="Models\EffectsCollection.cs" />
@@ -91,14 +91,15 @@
     <Compile Include="Models\Scene.cs" />
     <Compile Include="Models\SceneManager.cs" />
     <Compile Include="ViewModelLocator.cs" />
+    <Compile Include="ViewModels\AdventureManagerViewModel.cs" />
     <Compile Include="ViewModels\BackgroundMusicViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\SoundEffectsViewModel.cs" />
+    <Compile Include="Views\AdventureManagerView.xaml.cs">
+      <DependentUpon>AdventureManagerView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\BackgroundMusicView.xaml.cs">
       <DependentUpon>BackgroundMusicView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\SceneManagerView.xaml.cs">
-      <DependentUpon>SceneManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SoundEffectsView.xaml.cs">
       <DependentUpon>SoundEffectsView.xaml</DependentUpon>
@@ -119,11 +120,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\BackgroundMusicView.xaml">
+    <Page Include="Views\AdventureManagerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\SceneManagerView.xaml">
+    <Page Include="Views\BackgroundMusicView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

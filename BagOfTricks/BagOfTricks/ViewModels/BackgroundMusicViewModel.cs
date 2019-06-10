@@ -121,7 +121,7 @@ namespace BagOfTricks.ViewModels
         /// </summary>
         public BackgroundMusicViewModel()
         {
-            MyAudioPlayer = new AudioPlayerSimulator();
+            MyAudioPlayer = new DesignModels.AudioPlayerSimulator();
         }
 
         /// <summary>
