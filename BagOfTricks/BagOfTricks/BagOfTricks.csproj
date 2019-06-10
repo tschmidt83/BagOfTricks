@@ -80,6 +80,7 @@
     <Compile Include="Converters\EditModeConverter.cs" />
     <Compile Include="Helpers\AutoDisposeAudioFileReader.cs" />
     <Compile Include="Helpers\CachedEffect.cs" />
+    <Compile Include="Models\Adventure.cs" />
     <Compile Include="Models\AudioPlayer.cs" />
     <Compile Include="Models\AudioPlayerSimulator.cs" />
     <Compile Include="Models\EffectEntry.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Models\EffectsCollection.cs" />
     <Compile Include="Models\Playlist.cs" />
     <Compile Include="Models\PlaylistEntry.cs" />
+    <Compile Include="Models\Scene.cs" />
     <Compile Include="Models\SceneManager.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\BackgroundMusicViewModel.cs" />

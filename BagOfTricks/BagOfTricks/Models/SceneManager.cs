@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace BagOfTricks.Models
 {
+    // TODO: Is this redundant with the ADVENTURE class? If yes, prefer adventure!
     /// <summary>
     /// Scene management: load a pre-defined set that can, but needs not, contain a playlist, an effects set, a map, ...
     /// </summary>
