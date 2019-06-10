@@ -23,6 +23,8 @@ namespace BagOfTricks
             //SimpleIoc.Default.Register<ViewModels.AdventureManagerViewModel>();
             SimpleIoc.Default.Register<ViewModels.BackgroundMusicViewModel>();
             SimpleIoc.Default.Register<ViewModels.SoundEffectsViewModel>();
+            SimpleIoc.Default.Register<ViewModels.DmMapViewModel>();
+            SimpleIoc.Default.Register<ViewModels.PlayerMapViewModel>();
         }
 
         public ViewModels.MainViewModel Main
@@ -32,15 +34,6 @@ namespace BagOfTricks
                 return SimpleIoc.Default.GetInstance<ViewModels.MainViewModel>();
             }
         }
-
-        public ViewModels.AdventureManagerViewModel Adventure
-        {
-            get
-            {
-                return SimpleIoc.Default.GetInstance<ViewModels.AdventureManagerViewModel>();
-            }
-        }
-
 
         public ViewModels.BackgroundMusicViewModel BackgroundMusic
         {
@@ -55,6 +48,22 @@ namespace BagOfTricks
             get
             {
                 return SimpleIoc.Default.GetInstance<ViewModels.SoundEffectsViewModel>();
+            }
+        }
+
+        public ViewModels.PlayerMapViewModel PlayerMap
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<ViewModels.PlayerMapViewModel>();
+            }
+        }
+
+        public ViewModels.DmMapViewModel DmMap
+        {
+            get
+            {
+                return SimpleIoc.Default.GetInstance<ViewModels.DmMapViewModel>();
             }
         }
     }

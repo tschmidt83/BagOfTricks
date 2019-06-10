@@ -90,16 +90,25 @@
     <Compile Include="Models\PlaylistEntry.cs" />
     <Compile Include="Models\Scene.cs" />
     <Compile Include="Models\SceneManager.cs" />
+    <Compile Include="Models\WebServer.cs" />
     <Compile Include="ViewModelLocator.cs" />
     <Compile Include="ViewModels\AdventureManagerViewModel.cs" />
     <Compile Include="ViewModels\BackgroundMusicViewModel.cs" />
+    <Compile Include="ViewModels\DmMapViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
+    <Compile Include="ViewModels\PlayerMapViewModel.cs" />
     <Compile Include="ViewModels\SoundEffectsViewModel.cs" />
     <Compile Include="Views\AdventureManagerView.xaml.cs">
       <DependentUpon>AdventureManagerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\BackgroundMusicView.xaml.cs">
       <DependentUpon>BackgroundMusicView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\DmMapView.xaml.cs">
+      <DependentUpon>DmMapView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PlayerMapView.xaml.cs">
+      <DependentUpon>PlayerMapView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SoundEffectsView.xaml.cs">
       <DependentUpon>SoundEffectsView.xaml</DependentUpon>
@@ -125,6 +134,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\BackgroundMusicView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\DmMapView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PlayerMapView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

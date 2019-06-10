@@ -16,6 +16,12 @@
             <TabItem Header="Effekte">
                 <v:SoundEffectsView/>
             </TabItem>
+            <TabItem Header="Player Map">
+                <v:PlayerMapView/>
+            </TabItem>
+            <TabItem Header="DM Map">
+                <v:DmMapView/>
+            </TabItem>
         </TabControl>
     </DockPanel>
 </Window>
