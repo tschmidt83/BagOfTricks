@@ -19,16 +19,6 @@ namespace BagOfTricks.ViewModels
     public class MainViewModel : ViewModelBase
     {
         /// <summary>
-        /// Reference to the scene manager class
-        /// </summary>
-        private SceneManager MySceneManager
-        {
-            get { return SimpleIoc.Default.GetInstance<SceneManager>(); }
-        }
-
-        // TODO: Different declarations for scene manager and audio player, why?
-
-        /// <summary>
         /// Reference to the audio player class
         /// </summary>
         private readonly IAudioPlayer MyAudioPlayer;

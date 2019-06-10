@@ -17,11 +17,10 @@ namespace BagOfTricks
 
             // Register types
             SimpleIoc.Default.Register<BagOfTricks.Interfaces.IAudioPlayer, BagOfTricks.Models.AudioPlayer>(true);
-            SimpleIoc.Default.Register<BagOfTricks.Models.SceneManager>(true);
 
             // Register viewmodels
             SimpleIoc.Default.Register<ViewModels.MainViewModel>();
-            SimpleIoc.Default.Register<ViewModels.AdventureManagerViewModel>();
+            //SimpleIoc.Default.Register<ViewModels.AdventureManagerViewModel>();
             SimpleIoc.Default.Register<ViewModels.BackgroundMusicViewModel>();
             SimpleIoc.Default.Register<ViewModels.SoundEffectsViewModel>();
         }
