@@ -19,15 +19,6 @@ namespace BagOfTricks.ViewModels
     {
         private readonly AudioPlayer MyAudioPlayer;
 
-        /***** EditMode *****/
-        private bool m_EditMode = false;
-
-        public bool EditMode
-        {
-            get { return m_EditMode; }
-            set { m_EditMode = value; RaisePropertyChanged("EditMode"); }
-        }
-
         /***** MyEffectsCollection *****/
         private EffectsCollection m_MyEffectsCollection = new EffectsCollection();
 
@@ -38,6 +29,8 @@ namespace BagOfTricks.ViewModels
         }
 
         private RelayCommand<CachedEffect> m_PlayEffectCommand;
+        private RelayCommand<CachedEffect> m_EditEffectCommand;
+        private RelayCommand<CachedEffect> m_ClearEffectCommand;
         private RelayCommand m_SaveEffectListCommand;
         private RelayCommand m_LoadEffectListCommand;
 
@@ -47,8 +40,28 @@ namespace BagOfTricks.ViewModels
             get
             {
                 if (m_PlayEffectCommand == null)
-                    m_PlayEffectCommand = new RelayCommand<CachedEffect>((p) => PlayEffect(p), (p) => p != null && (EditMode || p.IsInitialized));
+                    m_PlayEffectCommand = new RelayCommand<CachedEffect>((p) => PlayEffect(p), (p) => p != null && p.IsInitialized);
                 return m_PlayEffectCommand;
+            }
+        }
+
+        public RelayCommand<CachedEffect> EditEffectCommand
+        {
+            get
+            {
+                if (m_EditEffectCommand == null)
+                    m_EditEffectCommand = new RelayCommand<CachedEffect>((p) => EditEffect(p), (p) => p != null && !p.IsPlaying);
+                return m_EditEffectCommand;
+            }
+        }
+
+        public RelayCommand<CachedEffect> ClearEffectCommand
+        {
+            get
+            {
+                if (m_ClearEffectCommand == null)
+                    m_ClearEffectCommand = new RelayCommand<CachedEffect>((p) => ClearEffect(p), (p) => p != null && p.IsInitialized && !p.IsPlaying);
+                return m_ClearEffectCommand;
             }
         }
 
@@ -91,6 +104,19 @@ namespace BagOfTricks.ViewModels
             MyAudioPlayer = player;
         }
 
+        /// <summary>
+        /// Clears an effect
+        /// </summary>
+        /// <param name="p">Effect</param>
+        private void ClearEffect(CachedEffect p)
+        {
+            p.Clear();
+        }
+
+        /// <summary>
+        /// Edits (loads) an effect
+        /// </summary>
+        /// <param name="p">Effect</param>
         private void EditEffect(CachedEffect p)
         {
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
@@ -107,19 +133,16 @@ namespace BagOfTricks.ViewModels
             }
         }
 
+        /// <summary>
+        /// Plays or stops an effect
+        /// </summary>
+        /// <param name="p">Effect</param>
         private void PlayEffect(CachedEffect p)
         {
-            if(EditMode)
-            {
-                EditEffect(p);
-            }
+            if (p.IsPlaying)
+                MyAudioPlayer.EffectStop(p);
             else
-            {
-                if (p.IsPlaying)
-                    MyAudioPlayer.EffectStop(p);
-                else
-                    MyAudioPlayer.EffectPlay(p);
-            }
+                MyAudioPlayer.EffectPlay(p);
         }
 
         private void SaveEffectList()

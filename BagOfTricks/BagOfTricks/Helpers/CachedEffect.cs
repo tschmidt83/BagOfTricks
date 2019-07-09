@@ -82,6 +82,19 @@ namespace BagOfTricks.Helpers
             Initialize(audioFileName);
         }
 
+        /// <summary>
+        /// Clears an effect
+        /// </summary>
+        public void Clear()
+        {
+            if (!IsPlaying)
+            {
+                IsInitialized = false;
+                EffectName = "---";
+                EffectPath = string.Empty;
+            }
+        }
+
         // Initialize the cached effect
         public void Initialize(string audioFileName)
         {

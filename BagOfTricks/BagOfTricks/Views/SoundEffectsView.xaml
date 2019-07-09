@@ -14,7 +14,6 @@
 
     <UserControl.Resources>
         <c:BoolInvertConverter x:Key="biConv"/>
-        <c:EditModeConverter x:Key="emConv"/>
 
         <DataTemplate DataType="{x:Type h:CachedEffect}">
             <Grid Width="100" Height="100" Margin="5">
@@ -28,17 +27,26 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding EffectName}" TextAlignment="Center"/>
-                <Button Grid.Row="1" Grid.Column="0" Content="Play" Command="{Binding Source={StaticResource Locator}, Path=SoundEffects.PlayEffectCommand}" CommandParameter="{Binding}" Background="{Binding Source={StaticResource Locator}, Path=SoundEffects.EditMode, Converter={StaticResource emConv}}"/>
+                <Button x:Name="FxButton" Grid.Row="1" Grid.Column="0" Content="Play" Command="{Binding Source={StaticResource Locator}, Path=SoundEffects.PlayEffectCommand}" CommandParameter="{Binding}"/>
                 <CheckBox Grid.Row="2" Grid.Column="0" Content="Loop" IsChecked="{Binding LoopEffect}"/>
+                <Grid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Bearbeiten" Command="{Binding Source={StaticResource Locator}, Path=SoundEffects.EditEffectCommand}" CommandParameter="{Binding}"/>
+                        <MenuItem Header="Löschen" Command="{Binding Source={StaticResource Locator}, Path=SoundEffects.ClearEffectCommand}" CommandParameter="{Binding}"/>
+                    </ContextMenu>
+                </Grid.ContextMenu>
             </Grid>
+
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsPlaying}" Value="True">
+                    <Setter TargetName="FxButton" Property="Background" Value="#FFFFB427"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
         </DataTemplate>
     </UserControl.Resources>
 
     <DockPanel LastChildFill="True">
         <StackPanel DockPanel.Dock="Right" Width="120">
-            <ToggleButton Content="Bearbeiten" IsChecked="{Binding EditMode}"/>
-            
-            <Separator/>
             <Button Content="Speichern"/>
             <Button Content="Laden"/>
         </StackPanel>
