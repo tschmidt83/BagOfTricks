@@ -12,7 +12,7 @@ namespace BagOfTricks.Helpers
 {
     // Based on https://markheath.net/post/fire-and-forget-audio-playback-with
     [Serializable]
-    public class CachedEffect : ISampleProvider
+    public class CachedEffect : ISampleProvider, INotifyPropertyChanged
     {
         /***** IsPlaying *****/
         private bool m_IsPlaying = false;
@@ -42,22 +42,22 @@ namespace BagOfTricks.Helpers
             set { m_LoopEffect = value; RaisePropertyChanged("LoopEffect"); }
         }
 
-        /***** Path *****/
-        private string m_Path;
+        /***** EffectPath *****/
+        private string m_EffectPath;
 
-        public string Path
+        public string EffectPath
         {
-            get { return m_Path; }
-            set { m_Path = value; RaisePropertyChanged("Path"); }
+            get { return m_EffectPath; }
+            set { m_EffectPath = value; RaisePropertyChanged("EffectPath"); }
         }
 
-        /***** Name *****/
-        private string m_Name = "---";
+        /***** EffectName *****/
+        private string m_EffectName = "---";
 
-        public string Name
+        public string EffectName
         {
-            get { return m_Name; }
-            set { m_Name = value; RaisePropertyChanged("Name"); }
+            get { return m_EffectName; }
+            set { m_EffectName = value; RaisePropertyChanged("EffectName"); }
         }
 
         private bool m_IsInitialized = false;
@@ -90,8 +90,8 @@ namespace BagOfTricks.Helpers
                 System.IO.FileInfo fi = new System.IO.FileInfo(audioFileName);
                 Volume = 1.0f;
                 LoopEffect = false;
-                Name = fi.Name.Replace(fi.Extension, "");
-                Path = audioFileName;
+                EffectName = fi.Name.Replace(fi.Extension, "");
+                EffectPath = audioFileName;
 
                 using (var audioFileReader = new AudioFileReader(audioFileName))
                 {

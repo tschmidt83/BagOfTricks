@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ using BagOfTricks.Helpers;
 namespace BagOfTricks.Models
 {
     [Serializable]
-    public class EffectsCollection
+    public class EffectsCollection : INotifyPropertyChanged
     {
         private const int NUMBER_OF_EFFECTS = 15;
 
@@ -31,9 +32,9 @@ namespace BagOfTricks.Models
         }
 
         /***** EffectsList *****/
-        private List<Helpers.CachedEffect> m_EffectsList = new List<CachedEffect>(NUMBER_OF_EFFECTS);
+        private ObservableCollection<Helpers.CachedEffect> m_EffectsList = new ObservableCollection<CachedEffect>();
 
-        public List<Helpers.CachedEffect> EffectsList
+        public ObservableCollection<Helpers.CachedEffect> EffectsList
         {
             get { return m_EffectsList; }
             set { m_EffectsList = value; RaisePropertyChanged("EffectsList"); }

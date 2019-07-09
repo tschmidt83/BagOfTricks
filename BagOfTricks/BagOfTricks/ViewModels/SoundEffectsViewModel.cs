@@ -79,8 +79,6 @@ namespace BagOfTricks.ViewModels
         public SoundEffectsViewModel()
         {
             MyAudioPlayer = null;
-            for (int i = 0; i < MyEffectsCollection.NumberOfEffects; i++)
-                MyEffectsCollection.EffectsList.Add(new CachedEffect());
         }
 
         /// <summary>
@@ -186,7 +184,7 @@ namespace BagOfTricks.ViewModels
                 {
                     // Initialize all effects
                     foreach (CachedEffect e in MyEffectsCollection.EffectsList)
-                        e.Initialize(e.Path);
+                        e.Initialize(e.EffectPath);
                 }
             }
         }
