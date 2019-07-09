@@ -16,7 +16,8 @@ namespace BagOfTricks
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
 
             // Register types
-            SimpleIoc.Default.Register<BagOfTricks.Interfaces.IAudioPlayer, BagOfTricks.Models.AudioPlayer>(true);
+            //SimpleIoc.Default.Register<BagOfTricks.Interfaces.IAudioPlayer, BagOfTricks.Models.AudioPlayer>(true);
+            SimpleIoc.Default.Register<BagOfTricks.Models.AudioPlayer>(true);
 
             // Register viewmodels
             SimpleIoc.Default.Register<ViewModels.MainViewModel>();

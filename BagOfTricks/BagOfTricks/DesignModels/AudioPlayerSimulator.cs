@@ -69,6 +69,16 @@ namespace BagOfTricks.DesignModels
             throw new NotImplementedException();
         }
 
+        public double MusicGetStreamPosition()
+        {
+            return 0;
+        }
+
+        public void MusicPause()
+        {
+
+        }
+
         #region INotifyPropertyChanged members
         public event PropertyChangedEventHandler PropertyChanged;
 

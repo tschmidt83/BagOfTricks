@@ -13,7 +13,9 @@ namespace BagOfTricks.Interfaces
 
         bool EffectPlay(CachedEffect effect);
         bool MusicPlay(string path, bool loop = true, float volume = 1);
+        void MusicPause();
         void MusicSetStreamPosition(double percent);
+        double MusicGetStreamPosition();
         void MusicStop();
     }
 }

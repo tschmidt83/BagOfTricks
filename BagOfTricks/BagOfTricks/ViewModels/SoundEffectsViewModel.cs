@@ -17,7 +17,7 @@ namespace BagOfTricks.ViewModels
 {
     public class SoundEffectsViewModel : ViewModelBase
     {
-        private readonly IAudioPlayer MyAudioPlayer;
+        private readonly AudioPlayer MyAudioPlayer;
 
         /***** EditMode *****/
         private bool m_EditMode = false;
@@ -78,7 +78,7 @@ namespace BagOfTricks.ViewModels
         /// </summary>
         public SoundEffectsViewModel()
         {
-            MyAudioPlayer = new DesignModels.AudioPlayerSimulator();
+            MyAudioPlayer = null;
             for (int i = 0; i < MyEffectsCollection.NumberOfEffects; i++)
                 MyEffectsCollection.EffectsList.Add(new CachedEffect());
         }
@@ -88,7 +88,7 @@ namespace BagOfTricks.ViewModels
         /// </summary>
         /// <param name="player">Audio player</param>
         [PreferredConstructor]
-        public SoundEffectsViewModel(IAudioPlayer player)
+        public SoundEffectsViewModel(AudioPlayer player)
         {
             MyAudioPlayer = player;
         }

@@ -14,7 +14,7 @@ namespace BagOfTricks.Models
     /// <summary>
     /// Class for audio playback. Can play one music stream and several effects streams in parallel.
     /// </summary>
-    public class AudioPlayer : INotifyPropertyChanged, IDisposable, IAudioPlayer
+    public class AudioPlayer : INotifyPropertyChanged, IDisposable
     {
         /***** IsMusicPlaying *****/
         private bool m_IsMusicPlaying = false;
@@ -108,6 +108,31 @@ namespace BagOfTricks.Models
             Mixer.ReadFully = false;
             FxStack.Clear();
             OutputDevice.Dispose();
+        }
+
+        /// <summary>
+        /// Returns the position of the currently playing music stream.
+        /// </summary>
+        /// <returns>Position in bytes</returns>
+        public long MusicGetStreamPositionBytes()
+        {
+            long pos = 0;
+
+            try
+            {
+                AudioFileReader reader = MusicFileReader as AudioFileReader;
+
+                if (reader != null)
+                {
+                    pos = reader.Position;
+                }
+            }
+            catch
+            {
+                pos = 0;
+            }
+
+            return pos;
         }
 
         /// <summary>
@@ -256,6 +281,21 @@ namespace BagOfTricks.Models
                 long length = reader.Length;
                 long newPos = (long)(length * percent / 100);
                 reader.Position = newPos;
+            }
+        }
+
+        /// <summary>
+        /// Sets the current stream position for the background music.
+        /// </summary>
+        /// <param name="bytes">Position in bytes</param>
+        public void MusicSetStreamPositionBytes(long bytes)
+        {
+            AudioFileReader reader = MusicFileReader as AudioFileReader;
+
+            if (reader != null)
+            {
+                if(reader.Length > bytes)
+                    reader.Position = bytes;
             }
         }
 

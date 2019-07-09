@@ -12,18 +12,24 @@ using GalaSoft.MvvmLight.Ioc;
 using BagOfTricks.Interfaces;
 using BagOfTricks.Models;
 
+// TODO: When PLAY is pressed with a paused track, resume
+// TODO: When a track is double-clicked, play that track
+
 namespace BagOfTricks.ViewModels
 {
     public class BackgroundMusicViewModel : ViewModelBase
     {
-        private readonly IAudioPlayer MyAudioPlayer;
+        private readonly AudioPlayer MyAudioPlayer;
 
         private RelayCommand m_LoadPlaylistCommand;
         private RelayCommand m_SavePlaylistCommand;
         private RelayCommand m_AddToPlaylistCommand;
         private RelayCommand m_RemoveFromPlaylistCommand;
         private RelayCommand m_StartPlayCommand;
+        private RelayCommand m_PlayResumeCommand;
         private RelayCommand m_StopPlayCommand;
+        private RelayCommand m_PlayPrevCommand;
+        private RelayCommand m_PlayNextCommand;
 
         #region Command Properties
 
@@ -72,8 +78,18 @@ namespace BagOfTricks.ViewModels
             get
             {
                 if (m_StartPlayCommand == null)
-                    m_StartPlayCommand = new RelayCommand(() => StartPlay(), () => true);
+                    m_StartPlayCommand = new RelayCommand(() => StartPlay(), () => MyAudioPlayer != null);
                 return m_StartPlayCommand;
+            }
+        }
+
+        public RelayCommand PlayResumeCommand
+        {
+            get
+            {
+                if (m_PlayResumeCommand == null)
+                    m_PlayResumeCommand = new RelayCommand(() => StartPlay(), () => MyAudioPlayer != null && !MyAudioPlayer.IsMusicPlaying);
+                return m_PlayResumeCommand;
             }
         }
 
@@ -82,8 +98,28 @@ namespace BagOfTricks.ViewModels
             get
             {
                 if (m_StopPlayCommand == null)
-                    m_StopPlayCommand = new RelayCommand(() => StopPlay(), () => MyAudioPlayer.IsMusicPlaying);
+                    m_StopPlayCommand = new RelayCommand(() => StopPlay(), () => MyAudioPlayer != null && MyAudioPlayer.IsMusicPlaying);
                 return m_StopPlayCommand;
+            }
+        }
+
+        public RelayCommand PlayNextCommand
+        {
+            get
+            {
+                if (m_PlayNextCommand == null)
+                    m_PlayNextCommand = new RelayCommand(() => PlayNext(), () => MyAudioPlayer != null);
+                return m_PlayNextCommand;
+            }
+        }
+
+        public RelayCommand PlayPrevCommand
+        {
+            get
+            {
+                if (m_PlayPrevCommand == null)
+                    m_PlayPrevCommand = new RelayCommand(() => PlayPrev(), () => MyAudioPlayer != null);
+                return m_PlayPrevCommand;
             }
         }
 
@@ -116,12 +152,23 @@ namespace BagOfTricks.ViewModels
             set { m_CurrentPlayback = value; RaisePropertyChanged("CurrentPlayback"); }
         }
 
+        /***** CurrentPlayPosition *****/
+        private double m_CurrentPlayPosition = 0;
+
+        public double CurrentPlayPosition
+        {
+            get { return m_CurrentPlayPosition; }
+            set { m_CurrentPlayPosition = value; RaisePropertyChanged("CurrentPlayPosition"); }
+        }
+
+        private System.Threading.Timer PositionRefreshTimer;
+
         /// <summary>
         /// Default (empty) constructor
         /// </summary>
         public BackgroundMusicViewModel()
         {
-            MyAudioPlayer = new DesignModels.AudioPlayerSimulator();
+            MyAudioPlayer = null;
         }
 
         /// <summary>
@@ -129,10 +176,19 @@ namespace BagOfTricks.ViewModels
         /// </summary>
         /// <param name="player">Audio player</param>
         [PreferredConstructor]
-        public BackgroundMusicViewModel(IAudioPlayer player)
+        public BackgroundMusicViewModel(AudioPlayer player)
         {
             MyAudioPlayer = player;
             MyAudioPlayer.MusicFinished += MyAudioPlayer_MusicFinished;
+        }
+
+        /// <summary>
+        /// Refreshes the current playback position info
+        /// </summary>
+        /// <param name="state"></param>
+        private void PositionRefreshTimerTick(object state)
+        {
+            CurrentPlayPosition = MyAudioPlayer.MusicGetStreamPositionBytes();
         }
 
         /// <summary>
@@ -284,28 +340,132 @@ namespace BagOfTricks.ViewModels
         private void StopPlay()
         {
             if (MyAudioPlayer.IsMusicPlaying)
+            {
                 MyAudioPlayer.MusicStop();
+                CurrentPlayback = null;
+                PositionRefreshTimer = null;
+            }
         }
 
         /// <summary>
-        /// Start playback at the currently selected track
+        /// Plays the next track in the list. Plays the first if already at the end.
+        /// </summary>
+        private void PlayNext()
+        {
+            PositionRefreshTimer = null;
+
+            if (MyAudioPlayer.IsMusicPlaying)
+            {
+                // Stop active music
+                MyAudioPlayer.MusicStop();
+            }
+
+            if (CurrentPlaylist.Entries.Count > 0)
+            {
+                try
+                {
+                    // Try to get the index of the currently playing track
+                    int idx = CurrentPlaylist.Entries.IndexOf(CurrentPlayback);
+                    
+                    if(idx == CurrentPlaylist.Entries.Count - 1)
+                    {
+                        // Entry was last, select first
+                        SelectedEntry = CurrentPlaylist.Entries[0];
+                    }
+                    else
+                    {
+                        // Select next entry
+                        SelectedEntry = CurrentPlaylist.Entries[idx + 1];
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Exception: select first entry. Could occur if the playlist was changed when a track was playing.
+                    SelectedEntry = CurrentPlaylist.Entries[0];
+                }
+                finally
+                {
+                    CurrentPlayback = null;
+                }
+
+                // Play selected
+                StartPlay();
+            }
+        }
+
+        /// <summary>
+        /// Plays the previous track in the list. Plays the last track if already at the beginning.
+        /// </summary>
+        private void PlayPrev()
+        {
+            PositionRefreshTimer = null;
+
+            if (MyAudioPlayer.IsMusicPlaying)
+            {
+                // Stop active music
+                MyAudioPlayer.MusicStop();
+            }
+
+            if (CurrentPlaylist.Entries.Count > 0)
+            {
+                try
+                {
+                    // Try to get the index of the currently playing track
+                    int idx = CurrentPlaylist.Entries.IndexOf(CurrentPlayback);
+
+                    if (idx == 0)
+                    {
+                        // Entry was first, select last
+                        SelectedEntry = CurrentPlaylist.Entries[CurrentPlaylist.Entries.Count - 1];
+                    }
+                    else
+                    {
+                        // Select previous entry
+                        SelectedEntry = CurrentPlaylist.Entries[idx - 1];
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Exception: select last entry. Could occur if the playlist was changed when a track was playing.
+                    SelectedEntry = CurrentPlaylist.Entries[CurrentPlaylist.Entries.Count - 1];
+                }
+                finally
+                {
+                    CurrentPlayback = null;
+                }
+
+                // Play selected
+                StartPlay();
+            }
+        }
+
+        /// <summary>
+        /// Start playback at the first track in the list. Starts at the selected track if invoked by a double click in the list.
         /// </summary>
         private void StartPlay()
         {
             if (CurrentPlaylist.Entries.Count > 0)
             {
+                // If already playing, stop.
+                if (CurrentPlayback != null)
+                    CurrentPlayback = null;
                 if (MyAudioPlayer.IsMusicPlaying)
                     MyAudioPlayer.MusicStop();
 
-                if (SelectedEntry != null)
+                if (SelectedEntry == null)
                 {
-                    MyAudioPlayer.MusicPlay(SelectedEntry.Path);
-                    CurrentPlayback = SelectedEntry;
+                    // No entry selected, play the first track in the list
+                    CurrentPlayback = CurrentPlaylist.Entries[0];
+                    SelectedEntry = CurrentPlayback;
+                    MyAudioPlayer.MusicPlay(CurrentPlayback.Path);
+                    PositionRefreshTimer = new System.Threading.Timer(PositionRefreshTimerTick, null, 1000, 1000);
                 }
                 else
                 {
-                    MyAudioPlayer.MusicPlay(CurrentPlaylist.Entries[0].Path);
-                    CurrentPlayback = CurrentPlaylist.Entries[0];
+                    // Play the selected entry
+                    CurrentPlayback = SelectedEntry;
+                    MyAudioPlayer.MusicPlay(CurrentPlayback.Path);
+                    PositionRefreshTimer = new System.Threading.Timer(PositionRefreshTimerTick, null, 1000, 1000);
                 }
             }
         }
