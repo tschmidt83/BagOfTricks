@@ -13,7 +13,7 @@ namespace BagOfTricks.Models
     [Serializable]
     public class EffectsCollection
     {
-        private const int NUMBER_OF_EFFECTS = 18;
+        private const int NUMBER_OF_EFFECTS = 15;
 
         [XmlIgnore]
         public int NumberOfEffects

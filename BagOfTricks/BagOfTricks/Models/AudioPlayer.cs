@@ -328,6 +328,33 @@ namespace BagOfTricks.Models
             return success;
         }
 
+        /// <summary>
+        /// Stops a running sound effect
+        /// </summary>
+        /// <param name="effect">Cached sound effect to be stopped</param>
+        /// <returns>True if stopped successfully.</returns>
+        public bool EffectStop(CachedEffect effect)
+        {
+            bool success = false;
+
+            if(effect.IsPlaying)
+            {
+                foreach(ISampleProvider s in FxStack.Keys)
+                {
+                    // Find the effect on the stack
+                    if(FxStack[s] == effect)
+                    {
+                        effect.IsPlaying = false;
+                        effect.LoopEffect = false;
+                        FxStack.Remove(effect);
+                        Mixer.RemoveMixerInput(s);
+                    }
+                }
+            }
+
+            return success;
+        }
+
         // From https://markheath.net/post/fire-and-forget-audio-playback-with
         /// <summary>
         /// Converts a SampleProvider to mono or stereo, in respect to the playback mixer

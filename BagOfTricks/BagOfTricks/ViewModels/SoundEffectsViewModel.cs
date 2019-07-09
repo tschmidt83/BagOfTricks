@@ -117,7 +117,10 @@ namespace BagOfTricks.ViewModels
             }
             else
             {
-                MyAudioPlayer.EffectPlay(p);
+                if (p.IsPlaying)
+                    MyAudioPlayer.EffectStop(p);
+                else
+                    MyAudioPlayer.EffectPlay(p);
             }
         }
 

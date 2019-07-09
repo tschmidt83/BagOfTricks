@@ -52,7 +52,7 @@ namespace BagOfTricks.Helpers
         }
 
         /***** Name *****/
-        private string m_Name = "Mein Effekt";
+        private string m_Name = "---";
 
         public string Name
         {
@@ -82,17 +82,15 @@ namespace BagOfTricks.Helpers
             Initialize(audioFileName);
         }
 
-        public void Initialize(string audioFileName, bool overwriteProperties = false)
+        // Initialize the cached effect
+        public void Initialize(string audioFileName)
         {
             if (!IsPlaying)
             {
                 System.IO.FileInfo fi = new System.IO.FileInfo(audioFileName);
-                if (overwriteProperties)
-                {
-                    Volume = 1.0f;
-                    LoopEffect = false;
-                    Name = fi.Name;
-                }
+                Volume = 1.0f;
+                LoopEffect = false;
+                Name = fi.Name.Replace(fi.Extension, "");
                 Path = audioFileName;
 
                 using (var audioFileReader = new AudioFileReader(audioFileName))
